@@ -8,7 +8,7 @@
 //を表す。ここではDは符号長にしている。
 #define N 8192   // 符号長
 #define M 8192     //有限体の元の数
-#define K (256)     //符号の次元
+#define K (10)     //符号の次元
 #define K2 K/4
 #define E (13)     //拡大体のビット数
 #define DEG K *E  //(K * E)

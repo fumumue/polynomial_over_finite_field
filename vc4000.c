@@ -2007,15 +2007,15 @@ vec prev(vec v,int k){
   return v;
 }
 
-int main(void)
+int mainga(void)
 {
   unsigned short f[K + 1] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0}; // big indian
   vec g, tt = {0};
   int i, l, ii;
 
   vec x;
-  static unsigned short gx[K + 1] = {1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1};
-  x = setpol(gx, K + 1);
+  //static unsigned short gx[K + 1] = {1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1};
+  x = setpol(f, K + 1);
   printpol(x);
   printf("%d\n", ben_or(x));
   // exit(1);
@@ -2067,6 +2067,69 @@ int main(void)
   irr_poly_to_file();
   get_irrpoly();
 
+
+  return 0;
+}
+
+
+// OP型からベクトル型への変換
+vec o2v(OP f)
+{
+  vec a = {0};
+  int i;
+
+  // #pragma omp parallel for
+  for (i = 0; i < DEG; i++)
+  {
+    if (f.t[i].a > 0 && f.t[i].n < DEG)
+      a.x[f.t[i].n] = f.t[i].a;
+  }
+
+  return a;
+}
+
+// ベクトル型からOP型への変換
+OP v2o(vec a)
+{
+  int i, j = 0;
+  OP f = {0};
+
+  // #pragma omp parallel for
+  for (i = 0; i < DEG; i++)
+  {
+    if (a.x[i] > 0)
+    {
+      f.t[j].n = i;
+      f.t[j++].a = a.x[i];
+    }
+  }
+
+  return f;
+}
+
+
+int main(void)
+{
+  unsigned short f[K + 1] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0}; //big indian
+  OP g;
+  int i;
+
+  //test , usage and example
+  for (i = 0; i < N; i++)
+  {
+    memset(&g, 0,sizeof(g));
+    f[K] = i;
+    g = v2o(setpol(f, K + 1));
+    if (ben_or(o2v(g)) == 0)
+    {
+      printpol(o2v(g));
+      printf(" is irreducible\n");
+    }
+    else
+    {
+      printf("reducible\n");
+    }
+  }
 
   return 0;
 }
